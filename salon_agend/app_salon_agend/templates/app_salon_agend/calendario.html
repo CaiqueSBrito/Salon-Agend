@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Horário - Selecione a Data</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #0b0b0b;
+            --surface: #141414;
+            --surface-hover: #1e1e1e;
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --text-main: #f5f5f5;
+            --text-muted: #888888;
+            --blocked: #2a2a2a;
+            --blocked-text: #444444;
+            --border: #222222;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem 1.5rem;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--gold);
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        .calendar-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar-header h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-transform: capitalize;
+            color: var(--text-main);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--gold);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--gold);
+            color: var(--bg-color);
+            border-color: var(--gold);
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .day-box {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 400;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-main);
+            border: 1px solid transparent;
+        }
+
+        /* Dias válidos e disponíveis */
+        .day-box.available {
+            background-color: var(--surface-hover);
+            border: 1px solid var(--border);
+        }
+
+        .day-box.available:hover {
+            background-color: var(--gold);
+            color: var(--bg-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+            font-weight: 600;
+        }
+
+        /* Dias vazios (padding de inicio de mês) */
+        .day-box.empty {
+            cursor: default;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        /* Dias bloqueados pelo admin ou passados */
+        .day-box.blocked {
+            background-color: var(--blocked);
+            color: var(--blocked-text);
+            cursor: not-allowed;
+            pointer-events: none;
+            border: 1px solid var(--border);
+        }
+
+        /* Dia atual de hoje */
+        .day-box.today {
+            border-color: var(--gold);
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .instructions {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Agendar Horário</h1>
+            <p class="subtitle">Escolha o melhor dia para você</p>
+        </header>
+
+        <main class="calendar-card">
+            <!-- Header do Calendário: Mês e Botões (Opcional implementar navegação via View/HTMX) -->
+            <div class="calendar-header">
+                <button class="nav-btn" aria-label="Mês Anterior">
+                    <i data-lucide="chevron-left" style="width: 18px;"></i>
+                </button>
+                <h2>{{ mes_atual }} {{ ano_atual }}</h2>
+                <button class="nav-btn" aria-label="Próximo Mês">
+                    <i data-lucide="chevron-right" style="width: 18px;"></i>
+                </button>
+            </div>
+
+            <!-- Dias da Semana (Dom, Seg, Ter...) -->
+            <div class="weekdays">
+                {% for dia_nome in dias_da_semana %}
+                    <div>{{ dia_nome }}</div>
+                {% endfor %}
+            </div>
+
+            <!-- Grade de Dias -->
+            <div class="days-grid">
+                {% for semana in calendario_semanas %}
+                    {% for info_dia in semana %}
+                        
+                        {% if not info_dia.dia %}
+                            <!-- Vazio -->
+                            <div class="day-box empty"></div>
+                        {% else %}
+                            
+                            {% if info_dia.bloqueado %}
+                                <!-- Dia bloqueado -->
+                                <div class="day-box blocked">
+                                    {{ info_dia.dia }}
+                                </div>
+                            {% else %}
+                                <!-- Dia disponível: Link param para a próxima view -->
+                                <!-- Aqui usamos a data_formatada na URL (ex: ?data=2026-04-10) -->
+                                <a href="{% url 'horarios' %}?data={{ info_dia.data_formatada }}" 
+                                   class="day-box available {% if info_dia.hoje %}today{% endif %}">
+                                    {{ info_dia.dia }}
+                                </a>
+                            {% endif %}
+                            
+                        {% endif %}
+                        
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </main>
+
+        <div class="instructions">
+            <i data-lucide="info" style="width: 16px;"></i>
+            <span>Selecione uma data destacada para continuar.</span>
+        </div>
+    </div>
+
+    <script>
+        // Inicializa os ícones do Lucide
+        lucide.createIcons();
+    </script>
+</body>
+</html>
