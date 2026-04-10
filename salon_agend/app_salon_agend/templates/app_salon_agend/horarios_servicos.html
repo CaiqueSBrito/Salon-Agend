@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Horário - Selecione Serviço e Horário</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Playfair+Display:ital,wght@1,600&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-color: #0b0b0b;
+            --surface: #141414;
+            --surface-hover: #1e1e1e;
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --text-main: #f5f5f5;
+            --text-muted: #888888;
+            --blocked: #2a2a2a;
+            --blocked-text: #444444;
+            --border: #222222;
+            --error: #ff4c4c;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem 1.5rem;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--gold);
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 1rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--gold);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        /* Oculta os radio-buttons reais */
+        input[type="radio"] {
+            display: none;
+        }
+
+        /* Estilo simulado para Serviço/Horário */
+        .option-label {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .option-label.blocked {
+            background-color: var(--blocked);
+            color: var(--blocked-text);
+            cursor: not-allowed;
+            pointer-events: none;
+            opacity: 0.6;
+            border-style: dashed;
+        }
+
+        .option-label:hover:not(.blocked) {
+            border-color: var(--gold);
+            background-color: var(--surface-hover);
+        }
+
+        input[type="radio"]:checked+.option-label {
+            background-color: var(--gold);
+            color: var(--bg-color);
+            border-color: var(--gold);
+            font-weight: 600;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.25);
+        }
+
+        .option-title {
+            margin-bottom: 5px;
+            font-size: 1.05rem;
+        }
+
+        .option-desc {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        input[type="radio"]:checked+.option-label .option-desc {
+            color: var(--bg-color);
+            opacity: 0.9;
+        }
+
+        /* Formulário de Contato */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .input-group input {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+        }
+
+        .submit-btn {
+            background-color: var(--gold);
+            color: var(--bg-color);
+            border: none;
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            background-color: var(--gold-light);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <a href="{% url 'calendario' %}" class="back-link">
+            <i data-lucide="arrow-left" style="width:16px;"></i> Voltar ao Calendário
+        </a>
+
+        <header>
+            <h1>Agendamento</h1>
+            <!-- Supondo que você envie context={"data_selecionada": "10 de Abril, 2026"} -->
+            <p style="color:var(--gold); font-size:1.1rem;">Data Selecionada:
+                <strong>
+                    {{ data_selecionada|default:"Selecione um dia" }}
+                </strong>
+            </p>
+        </header>
+
+        <form method="POST" action="#">
+            <!-- Token de Segurança Django -->
+            {% csrf_token %}
+
+            <!-- Campo oculto para não perder a data -->
+            <input type="hidden" name="data" value="{{ request.GET.data }}">
+
+            <!-- 1. SERVIÇOS -->
+            <div class="section-title">Escolha o Serviço</div>
+            <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+
+                {% for servico in servicos %}
+                <input type="radio" name="servico" id="srv_{{ servico.id }}" value="{{ servico.id }}" required>
+                <label class="option-label" for="srv_{{ servico.id }}">
+                    <div class="option-title">{{ servico.nome }}</div>
+                    <div class="option-desc">{{ servico.duracao }} min</div>
+                </label>
+                {% empty %}
+                <p style="color:var(--text-muted)">Nenhum serviço cadastrado.</p>
+                {% endfor %}
+
+            </div>
+
+            <!-- 2. HORÁRIOS -->
+            <div class="section-title">Escolha o Horário</div>
+            <div class="card-grid">
+
+                {% for horario in horarios %}
+                {% if horario.bloqueado %}
+                <div class="option-label blocked">
+                    <div class="option-title">{{ horario.hora }}</div>
+                    <div class="option-desc">Indisponível</div>
+                </div>
+                {% else %}
+                <input type="radio" name="hora" id="hr_{{ forloop.counter }}" value="{{ horario.hora }}" required>
+                <label class="option-label" for="hr_{{ forloop.counter }}">
+                    <div class="option-title" style="font-size: 1.2rem;">{{ horario.hora }}</div>
+                    <div class="option-desc">Livre</div>
+                </label>
+                {% endif %}
+                {% empty %}
+                <p style="color:var(--text-muted)">Nenhum horário disponível para esta data.</p>
+                {% endfor %}
+
+            </div>
+
+            <!-- 3. DADOS PESSOAIS -->
+            <div class="section-title">Seus Dados</div>
+
+            <div class="input-group">
+                <label for="nome">Nome Completo</label>
+                <input type="text" id="nome" name="nome" placeholder="John Doe" required>
+            </div>
+
+            <div class="input-group">
+                <label for="telefone">Telefone (WhatsApp)</label>
+                <input type="tel" id="telefone" name="telefone" placeholder="(11) 90000-0000" required>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Confirmar Agendamento <i data-lucide="check-circle" style="width: 20px;"></i>
+            </button>
+
+        </form>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
